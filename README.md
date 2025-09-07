@@ -70,9 +70,16 @@ ALTER USER 'sys_test'@'localhost' IDENTIFIED WITH mysql_native_password BY 'pass
 ![Cкриншот «Задание 1.7»](img/image7.png)
 
 ```
+wget https://downloads.mysql.com/docs/sakila-db.zip
+unzip sakila-db.zip
+cd sakila-db/
+```
+
+```
 mysql -u sys_temp -p < sakila-schema.sql
 mysql -u sys_temp -p < sakila-data.sql
 ```
+
 ```
 SHOW DATABASES;
 USE sakila; SHOW TABLES;
@@ -87,9 +94,39 @@ USE sakila; SHOW TABLES;
 customer         | customer_id
 ```
 
+### Ответ на задание 2
++---------------------------------+--------------------------------------------------+
+| Название таблицы                | Название первичного ключа                        |
++---------------------------------+--------------------------------------------------+
+| actor                           | actor_id                                         |
+| address                         | address_id                                       |
+| category                        | category_id                                      |
+| city                            | city_id                                          |
+| country                         | country_id                                       |
+| customer                        | customer_id                                      |
+| film                            | film_id                                          |
+| film_actor                      | actor_id,film_id                                 |
+| film_category                   | film_id,category_id                              |
+| film_text                       | film_id                                          |
+| inventory                       | inventory_id                                     |
+| language                        | language_id                                      |
+| payment                         | payment_id                                       |
+| rental                          | rental_id                                        |
+| staff                           | staff_id                                         |
+| store                           | store_id                                         |
++---------------------------------+--------------------------------------------------+
 
-## Дополнительные задания (со звёздочкой*)
-Эти задания дополнительные, то есть не обязательные к выполнению, и никак не повлияют на получение вами зачёта по этому домашнему заданию. Вы можете их выполнить, если хотите глубже шире разобраться в материале.
+```
+SELECT 
+    TABLE_NAME as 'Название таблицы',
+    GROUP_CONCAT(COLUMN_NAME) as 'Название первичного ключа'
+FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
+WHERE TABLE_SCHEMA = 'sakila' 
+    AND CONSTRAINT_NAME = 'PRIMARY'
+GROUP BY TABLE_NAME
+ORDER BY TABLE_NAME;
+```
+![Cкриншот «Задание 2»](img/image_2.png)
 
 ### Задание 3*
 3.1. Уберите у пользователя sys_temp права на внесение, изменение и удаление данных из базы sakila.
@@ -97,3 +134,17 @@ customer         | customer_id
 3.2. Выполните запрос на получение списка прав для пользователя sys_temp. (скриншот)
 
 *Результатом работы должны быть скриншоты обозначенных заданий, а также простыня со всеми запросами.*
+
+### Ответ на задание 3*
+
+
+```
+REVOKE INSERT, UPDATE, DELETE ON *.* FROM 'sys_temp'@'localhost';
+
+SHOW GRANTS FOR 'sys_temp'@'localhost';
+```
+
+![Cкриншот «Задание 3»](img/image_3.png)
+
+
+REVOKE INSERT ON *.* FROM 'sys_temp'@'localhost'; - не отзывает  UPDATE DELETE
